@@ -50,13 +50,36 @@ class ProductController extends BaseController {
 		$client = App::make('solrClient');
 		$query = $client->createSelect();
 
+		$query->setFields(array(
+			'title_s',
+			'image_s',
+			'attrs_product_detail_s',
+			'attrs_ttandard_feature_t',
+			'models_s'
+		));
+
 		$query->createFilterQuery('catalog')->setQuery('solr_system_s:"IDS_Catalog" AND sf_meta_class:"Product" AND title_s:"' . $alias . '"');		
 
 		$resultset = $client->execute($query);
 
 		foreach ($resultset as $document) {
 			echo '<h1>' . $document->title_s . '</h1>';
-			var_dump($document);
+
+			echo '<img src="' . $document->image_s[0] . '"  style="float: right; width: 256px;">';
+
+			echo '<h2>Description</h2>';
+			var_dump($document->attrs_product_detail_s);
+
+			echo '<h2>Features</h2>';
+			var_dump($document->attrs_ttandard_feature_t);
+			
+			echo '<h2>Models</h2>';
+			foreach ($document->models_s as $model) {
+				$json = json_decode($model);
+				echo $json->inv_id . ': ';
+				echo '<a href="' . $json->default->icon . '">Image</a><br>';
+				//echo $json->inv_id . '<br>';
+			}
 		}
 
 		/*
