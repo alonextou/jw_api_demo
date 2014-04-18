@@ -63,6 +63,8 @@ class ProductController extends BaseController {
 		$resultset = $client->execute($query);
 
 		foreach ($resultset as $document) {
+			echo '<p><a href="/products">Back to products</a></p>';
+
 			echo '<h1>' . $document->title_s . '</h1>';
 
 			echo '<img src="' . $document->image_s[0] . '"  style="float: right; width: 256px;">';
