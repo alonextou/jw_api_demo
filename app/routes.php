@@ -11,20 +11,16 @@
 |
 */
 
-Route::get('/products', function()
+Route::get('/', function()
 {
 	return Response::json(['version' => '0.1']);
 });
 
+Route::get('products', ['uses' => 'ProductController@getProducts']);
+Route::get('products/{title}', ['uses' => 'ProductController@getProduct']);
+
 Route::group(['prefix' => 'api/v1'], function()
 {
-	Route::get('/', function()
-	{
-		return Response::json(['version' => '0.1']);
-	});
-
-	Route::get('products', ['uses' => 'ProductController@getProducts']);
-	Route::get('products/{id}', ['uses' => 'ProductController@getProduct']);
 
 });
 

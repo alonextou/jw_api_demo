@@ -4,6 +4,8 @@ class ProductController extends BaseController {
 
 	public function getProducts()
 	{
+		echo '<pre>';
+
 		$client = App::make('solrClient');
 		$query = $client->createSelect();
 		$query->createFilterQuery('catalog')->setQuery('solr_system_s:"IDS_Catalog" AND sf_meta_class:"Product"');
@@ -19,8 +21,6 @@ class ProductController extends BaseController {
 		$facets = array();
 		$facets['categories'] = $resultset->getFacetSet()->getFacet('category');
 		$facets['lines'] = $resultset->getFacetSet()->getFacet('line');
-
-		echo '<pre>';
 
 		echo '<h1>Categories</h1>';
 		foreach ($facets['categories'] as $value => $count) {
@@ -38,22 +38,28 @@ class ProductController extends BaseController {
 
 		echo '<h1>Products</h1>';
 		foreach ($resultset as $document) {
-			echo $document->title_s . '<br/>';
+			echo '<a href="/products/' . $document->title_s . '">' . $document->title_s . '</a><br/>';
+
 		}
-
-
-/*
-		echo 'NumFound: '.$resultset->getNumFound();
-		echo '<pre>';
-		foreach ($resultset as $document) {
-			var_dump($document);
-		}
-*/
-
 	}
 
-	public function getProduct($id)
+	public function getProduct($alias)
 	{
+		echo '<pre>';
+
+		$client = App::make('solrClient');
+		$query = $client->createSelect();
+
+		$query->createFilterQuery('catalog')->setQuery('solr_system_s:"IDS_Catalog" AND sf_meta_class:"Product" AND title_s:"' . $alias . '"');		
+
+		$resultset = $client->execute($query);
+
+		foreach ($resultset as $document) {
+			echo '<h1>' . $document->title_s . '</h1>';
+			var_dump($document);
+		}
+
+		/*
 		$client = App::make('solrClient');
 
 		$query = $client->createSelect();
@@ -67,6 +73,7 @@ class ProductController extends BaseController {
 		foreach ($resultset as $document) {
 			var_dump($document);
 		}
+		*/
 	}
 
 }
