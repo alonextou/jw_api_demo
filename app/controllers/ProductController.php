@@ -73,12 +73,14 @@ class ProductController extends BaseController {
 			echo '<h2>Features</h2>';
 			var_dump($document->attrs_ttandard_feature_t);
 			
-			echo '<h2>Models</h2>';
-			foreach ($document->models_s as $model) {
-				$json = json_decode($model);
-				echo $json->inv_id . ': ';
-				echo '<a href="' . $json->default->icon . '">Image</a><br>';
-				//echo $json->inv_id . '<br>';
+			if($document->models_s){
+				echo '<h2>Models</h2>';
+				foreach ($document->models_s as $model) {
+					$json = json_decode($model);
+					echo $json->inv_id . ': ';
+					echo '<a href="' . $json->default->icon . '">Image</a><br>';
+					//echo $json->inv_id . '<br>';
+				}
 			}
 		}
 
