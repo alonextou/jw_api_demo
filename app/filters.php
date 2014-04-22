@@ -13,11 +13,50 @@
 
 App::before(function($request)
 {
+	Session::flush();
+	// Important! Must ensure indexes exist,
+	// so that changing session does not lock user out of App.
+
+	if (!Session::has('language'))
+	{
+	    Session::put('language', 'en');
+	}
+
+	if (!Session::has('catalog'))
+	{
+	    Session::put('catalog', 'jw');
+	}
+
 	App::singleton('solrClient', function()
 	{
 		$config = Config::get('solarium.config');
 		return new Solarium\Client($config);
 	});
+
+	App::singleton('esClient', function()
+	{
+		$params['hosts'] = array (
+			'127.0.0.1:9200',
+			'localhost:9200',
+			'192.168.33.10:9200',
+			'web.dev:9200',
+			'api.jw.dev:9200'
+		);
+		$params['logging'] = true;
+		$params['logPath'] = '/var/www/elasticsearch/logs/api.log';
+		return new Elasticsearch\Client($params);
+	});
+
+	// TODO: REMOVE THIS!
+	$client = App::make('esClient');
+	try{
+		$params['index'] = 'jw';
+		$client->indices()->create($params);
+		$params['index'] = 'jw_hd';
+		$client->indices()->create($params);
+	}catch(Exception $e){
+		
+	}
 });
 
 
