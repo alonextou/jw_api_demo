@@ -16,7 +16,7 @@ App::before(function($request)
 	Session::flush();
 	// Important! Must ensure indexes exist,
 	// so that changing session does not lock user out of App.
-
+	
 	if (!Session::has('language'))
 	{
 	    Session::put('language', 'en');
@@ -35,13 +35,10 @@ App::before(function($request)
 
 	App::singleton('esClient', function()
 	{
-		$params['hosts'] = array (
-			'127.0.0.1:9200',
-			'localhost:9200',
-			'192.168.33.10:9200',
-			'web.dev:9200',
-			'api.jw.dev:9200'
-		);
+
+		$
+
+		$params['hosts'] = Config::get('elasticsearch.hosts');
 		$params['logging'] = true;
 		$params['logPath'] = '/var/www/elasticsearch/logs/api.log';
 		return new Elasticsearch\Client($params);
